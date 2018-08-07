@@ -80,7 +80,7 @@ while(len(currentPopulation) != 100):
     currentPopulation.append(child[0])
     currentPopulation.append(child[1])
 
-for i in range(0,501):
+for i in range(0,101):
      #os.system('clear')
      
      currentPopulation = sorted(currentPopulation,key=lambda x: (x[4]),reverse = True)
