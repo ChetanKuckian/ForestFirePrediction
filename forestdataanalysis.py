@@ -12,12 +12,55 @@ import math
 import random
 import os
 
+currentPopulation = []
+nextGeneration = []
+matedCouples= []
+
+def addToNextGen():
+    i = 0
+    j=0
+    pop = []
+    while(i != 100):
+        if nextGeneration[j] not in pop:
+            pop.append(nextGeneration[j])
+            i+=1
+        j+=1    
+    currentPopulation = pop        
 
 def calcFddi(DF,T,RH, U):
     fddi = 2 * math.exp(-0.45 + 0.978*math.log(DF) - 0.0345 * RH + 0.0338 * T + 0.0234 * U)
     return int(fddi)
 
-currentPopulation = []
+def printpop():
+    for i in range(len(currentPopulation)):
+        print(currentPopulation[i])
+
+def mutateChild(child):
+    index = random.sample(range(0,3),2)
+    child[index[0]] = random.randint(int(AllMinMax[index[0]][0]),int(AllMinMax[index[0]][1]))
+    child[index[1]] = random.randint(int(AllMinMax[index[1]][0]),int(AllMinMax[index[1]][1]))    
+    return child
+
+def makeChildren():
+    parentsIndex = random.sample(range(0,49),2)
+    parents = [currentPopulation[parentsIndex[0]],currentPopulation[parentsIndex[1]]]
+    if parents in matedCouples:
+        return None
+    matedCouples.append(parents)    
+    temp = parents[0]
+    parents[0][1:] = parents[1][1:]
+    parents[1][1:] = temp[1:]
+    
+    x = random.randint(1,101)
+    if(x == 6):
+        y = random.randint(0,1)
+        parents[y] = mutateChild(parents[y])
+        
+    parents[0][-1] = calcFddi(parents[0][0],parents[0][1],parents[0][2],parents[0][3])
+    parents[1][-1] = calcFddi(parents[1][0],parents[1][1],parents[1][2],parents[1][3])    
+    return parents
+        
+
 
 
 fire = pandas.read_csv("forestfires.csv")
@@ -47,56 +90,47 @@ for i in range(len(fire.index)):
 fires = fire.sort_values('fddi', ascending = False) 
 fires.reset_index(drop = True,inplace = True)
 
-
-for i in range(0,50):
-    currentPopulation.append(list(map(int,fire.loc[i].values)))
+for i in range(0,100):
+    currentPopulation.append(list(fires.loc[i].values))
 print(len(currentPopulation))  
 
-AllMinMax = [[1,10],[fire['temp'].min(),fire['temp'].max()],[fire['RH'].min(),fire['RH'].max()],[fire['wind'].min(),fire['wind'].max()]]
+for i in range(0,50):
+    nextGeneration.append(list(fires.loc[i].values))
 
-def mutateChild(child):
-    index = random.sample(range(0,3),2)
-    child[index[0]] = random.randint(int(AllMinMax[index[0]][0]),int(AllMinMax[index[0]][1]))    
-    return child
+AllMinMax = [[1,10],[20,50],[fire['RH'].min(),fire['RH'].max()],[30,120]]
 
-def makeChildren():
-    parentsIndex = random.sample(range(0,49),2)
-    parents = [currentPopulation[parentsIndex[0]],currentPopulation[parentsIndex[1]]]
-    temp = parents[0]
-    parents[0][1:] = parents[1][1:]
-    parents[1][1:] = temp[1:]
     
-    x = random.randint(1,101)
-    if(x in [6, 23, 47, 62, 81, 94]):
-        y = random.randint(0,1)
-        parents[y] = mutateChild(parents[y])
-        
-    parents[0][-1] = calcFddi(parents[0][0],parents[0][1],parents[0][2],parents[0][3])
-    parents[1][-1] = calcFddi(parents[1][0],parents[1][1],parents[1][2],parents[1][3])    
-    return parents
-    
-while(len(currentPopulation) != 100):
+while(len(nextGeneration) < 100):
     child = makeChildren()
-    currentPopulation.append(child[0])
-    currentPopulation.append(child[1])
+    print(len(nextGeneration))
+    if(child != None):
+        if(child[0] not in nextGeneration):
+            nextGeneration.append(child[0])
+        if(child[1] not in nextGeneration):    
+            nextGeneration.append(child[1])
 
+nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
+currentPopulation = nextGeneration[0:100]  
 for i in range(0,101):
      #os.system('clear')
-     
-     currentPopulation = sorted(currentPopulation,key=lambda x: (x[4]),reverse = True)
-     currentPopulation = currentPopulation[0:50][:]
-    
-     while(len(currentPopulation) != 100):
-         
+     #currentPopulation = sorted(currentPopulation,key=lambda x: (x[4]),reverse = True)
+     matedCouples = []
+     nextGeneration = list(set(currentPopulation[0:50]))
+     print("Generation-",i)
+     while(len(nextGeneration) < 100):
          child = makeChildren()
-         currentPopulation.append(child[0])
-         currentPopulation.append(child[1])
-
-def printpop():
-    for i in range(len(currentPopulation)):
-        print(currentPopulation[i])
-        
-printpop()        
+         print(len(nextGeneration))
+         if(child != None):
+             if(child[0] not in nextGeneration):
+                 nextGeneration.append(child[0])
+             if(child[1] not in nextGeneration):    
+                 nextGeneration.append(child[1])
+     print("out")       
+     nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
+     currentPopulation = nextGeneration[0:100] 
+     #addToNextGen()
+ 
+printpop()    
 #print(currentPopulation)  
 #print(fire.corr()["area"])
 #plt.scatter(fire['area'],fire['fddi'])
