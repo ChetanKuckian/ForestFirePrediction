@@ -12,20 +12,23 @@ import math
 import random
 import os
 
+
+
+
+
+
+
 currentPopulation = []
 nextGeneration = []
 matedCouples= []
 
 def addToNextGen():
-    i = 0
-    j=0
     pop = []
-    while(i != 100):
-        if nextGeneration[j] not in pop:
-            pop.append(nextGeneration[j])
-            i+=1
-        j+=1    
-    currentPopulation = pop        
+    nextGeneration.clear()
+    for person in currentPopulation:
+        if person not in pop:
+            pop.append(person)
+            nextGeneration.append(person)        
 
 def calcFddi(DF,T,RH, U):
     fddi = 2 * math.exp(-0.45 + 0.978*math.log(DF) - 0.0345 * RH + 0.0338 * T + 0.0234 * U)
@@ -104,9 +107,9 @@ while(len(nextGeneration) < 100):
     child = makeChildren()
     print(len(nextGeneration))
     if(child != None):
-        if(child[0] not in nextGeneration):
+        #if(child[0] not in nextGeneration):
             nextGeneration.append(child[0])
-        if(child[1] not in nextGeneration):    
+        #if(child[1] not in nextGeneration):    
             nextGeneration.append(child[1])
 
 nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
@@ -115,15 +118,15 @@ for i in range(0,101):
      #os.system('clear')
      #currentPopulation = sorted(currentPopulation,key=lambda x: (x[4]),reverse = True)
      matedCouples = []
-     nextGeneration = list(set(currentPopulation[0:50]))
+     addToNextGen()
      print("Generation-",i)
      while(len(nextGeneration) < 100):
          child = makeChildren()
          print(len(nextGeneration))
          if(child != None):
-             if(child[0] not in nextGeneration):
+             #if(child[0] not in nextGeneration):
                  nextGeneration.append(child[0])
-             if(child[1] not in nextGeneration):    
+             #if(child[1] not in nextGeneration):    
                  nextGeneration.append(child[1])
      print("out")       
      nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
