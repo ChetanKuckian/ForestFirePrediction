@@ -11,14 +11,21 @@ import matplotlib.pyplot as plt
 import math
 import random
 import os
+from genetics import Genetic
 
 
 
 
 
+ga = Genetic()
+
+for i in range(1,101):
+    ga.printPop(ga.currentPopulation, i)
+    ga.createNextGeneration()
+    ga.addToNextGen()
 
 
-currentPopulation = []
+'''currentPopulation = []
 nextGeneration = []
 matedCouples= []
 
@@ -95,7 +102,7 @@ fires.reset_index(drop = True,inplace = True)
 
 for i in range(0,100):
     currentPopulation.append(list(fires.loc[i].values))
-print(len(currentPopulation))  
+print(len(currentPopulation))
 
 for i in range(0,50):
     nextGeneration.append(list(fires.loc[i].values))
@@ -115,25 +122,26 @@ while(len(nextGeneration) < 100):
 nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
 currentPopulation = nextGeneration[0:100]  
 for i in range(0,101):
-     #os.system('clear')
-     #currentPopulation = sorted(currentPopulation,key=lambda x: (x[4]),reverse = True)
-     matedCouples = []
-     addToNextGen()
-     print("Generation-",i)
-     while(len(nextGeneration) < 100):
-         child = makeChildren()
-         print(len(nextGeneration))
-         if(child != None):
-             #if(child[0] not in nextGeneration):
-                 nextGeneration.append(child[0])
-             #if(child[1] not in nextGeneration):    
-                 nextGeneration.append(child[1])
-     print("out")       
-     nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
-     currentPopulation = nextGeneration[0:100] 
-     #addToNextGen()
+    #os.system('clear')
+    #currentPopulation = sorted(currentPopulation,key=lambda x: (x[4]),reverse = True)
+    matedCouples = []
+    addToNextGen()
+    print("Generation-",i)
+    while(len(nextGeneration) < 100):
+        child = makeChildren()
+        print(len(nextGeneration))
+        if(child != None):
+            #if(child[0] not in nextGeneration):
+                nextGeneration.append(child[0])
+            #if(child[1] not in nextGeneration):    
+                nextGeneration.append(child[1])
+    print("out")       
+    nextGeneration = sorted(nextGeneration,key=lambda x: (x[4]),reverse = True)
+    currentPopulation = nextGeneration[0:100]
+    #addToNextGen()
  
 printpop()    
 #print(currentPopulation)  
 #print(fire.corr()["area"])
 #plt.scatter(fire['area'],fire['fddi'])
+'''
